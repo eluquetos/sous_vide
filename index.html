@@ -1,54 +1,357 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Recetas Sous Vide</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      padding: 40px;
-      text-align: center;
-    }
-
-    h1 {
-      color: #333;
-      margin-bottom: 30px;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    li {
-      margin: 10px 0;
-    }
-
-    a {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: #ff6347;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s ease;
-    }
-
-    a:hover {
-      background-color: #e5533f;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recetario Interactivo Sous Vide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Teko:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .title-font {
+            font-family: 'Teko', sans-serif;
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .menu-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .step-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border-left: 5px solid #4f46e5;
+        }
+        .step-header {
+            background-color: #4f46e5;
+            color: white;
+            padding: 1rem 1.5rem;
+        }
+        .step-content {
+            padding: 1.5rem;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        .task-item input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-right: 1rem;
+            accent-color: #4f46e5;
+        }
+        .task-item label {
+            flex-grow: 1;
+        }
+        .task-item.completed label {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 1.25rem;
+            background-color: #4ade80;
+            transition: width 0.5s ease-in-out;
+            text-align: center;
+            color: #1f2937;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<body>
-  <h1>Recetas Sous Vide</h1>
-  <ul>
-    <li><a href="cerdo_LM.HTML">Cerdo estilo LM</a></li>
-    <li><a href="camarones_ajillo.html">Camarones al Ajillo</a></li>
-    <li><a href="camarones_frios.html">Camarones en Servicio Frío</a></li>
-    <li><a href="hamburguesas.html">Hamburguesas</a></li>
-    <li><a href="pavo_muslos.html">Pavo Muslos (Anova)</a></li>
-    <li><a href="tiras_asado_cerdo.html">Tiras de Asado de Cerdo</a></li>
-  </ul>
+<body class="p-4 md:p-8">
+
+    <!-- Página del Menú Principal -->
+    <div id="main-menu-page" class="page active">
+        <div class="max-w-4xl mx-auto">
+            <header class="text-center mb-12">
+                <h1 class="text-6xl md:text-7xl title-font text-gray-800">Recetario Sous Vide</h1>
+                <p class="text-xl text-gray-600 mt-2">Por un Chef Michelin</p>
+            </header>
+            <main id="recipe-menu-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Las tarjetas de recetas se insertarán aquí -->
+            </main>
+        </div>
+    </div>
+
+    <!-- Página de la Receta Individual -->
+    <div id="recipe-page" class="page">
+        <div class="max-w-3xl mx-auto">
+            <header class="text-center mb-8">
+                <h1 id="recipe-title" class="text-5xl md:text-6xl title-font text-gray-800"></h1>
+                <p id="recipe-subtitle" class="text-lg text-gray-600 mt-2"></p>
+            </header>
+
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-gray-700 mb-2">Progreso Total</h2>
+                <div class="progress-bar-container">
+                    <div id="progressBar" class="progress-bar">0%</div>
+                </div>
+            </div>
+
+            <main id="recipe-steps-container">
+                <!-- Las fases de la receta se insertarán aquí -->
+            </main>
+            
+            <footer class="text-center mt-8 space-x-4">
+                <button id="back-to-menu" class="bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors">
+                    &larr; Menú Principal
+                </button>
+                <button id="resetButton" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
+                    Reiniciar Progreso
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainMenuPage = document.getElementById('main-menu-page');
+            const recipePage = document.getElementById('recipe-page');
+            const recipeMenuContainer = document.getElementById('recipe-menu-container');
+            const recipeStepsContainer = document.getElementById('recipe-steps-container');
+            const backToMenuButton = document.getElementById('back-to-menu');
+            
+            let currentRecipeId = null;
+
+            const getFormattedDate = (offset = 0) => {
+                const date = new Date();
+                date.setDate(date.getDate() + offset);
+                return date.toLocaleDateString('es-ES', { weekday: 'long', month: 'long', day: 'numeric' });
+            };
+
+            const allRecipes = {
+                "falda-cerdo": {
+                    title: "Falda de Cerdo 12h",
+                    subtitle: "Tierna, jugosa y llena de sabor.",
+                    icon: "🐖",
+                    phases: [
+                        { phase: 1, title: "Preparación y Adobo", timeline: `Hoy, ${getFormattedDate(0)}`, tasks: ["<strong>Ingredientes:</strong> 1.5 kg falda de cerdo, 1.5 cda pimentón dulce, 0.5 cda pimentón ahumado, 2 cdta comino, 2 cdta orégano, 2 cdta ajo en polvo, 18-20g sal, 1.5 cdta pimienta, 2 cda panela, jugo de 2 naranjas agrias, 3 cda aceite.", "Secar la carne a la perfección.", "Mezclar ingredientes del adobo hasta formar una pasta.", "Cubrir y masajear toda la carne con el adobo.", "Envasar la carne al vacío."] },
+                        { phase: 2, title: "Cocción Sous Vide", timeline: `Hoy a Mañana (${getFormattedDate(0)} - ${getFormattedDate(1)})`, tasks: ["Precalentar el roner a <strong>62°C (144°F)</strong>.", "Sumergir la bolsa en el agua caliente.", "Cocinar durante <strong>12 horas</strong>."] },
+                        { phase: 3, title: "Enfriamiento Rápido (Cook-Chill)", timeline: `Mañana, ${getFormattedDate(1)}`, tasks: ["Preparar un baño de agua con abundante hielo.", "Sumergir la bolsa caliente en el baño de hielo.", "Enfriar por completo durante al menos <strong>1 hora</strong>."] },
+                        { phase: 4, title: "Almacenamiento en Frío", timeline: `Hasta el día del servicio`, tasks: ["Secar el exterior de la bolsa fría.", "Guardar en la parte más fría del refrigerador.", "<strong>No abrir la bolsa</strong> hasta el día de servir."] },
+                        { phase: 5, title: "Regeneración y Sellado", timeline: "Día del Servicio", tasks: ["Precalentar el roner a <strong>58°C (136°F)</strong>.", "Sumergir la bolsa fría en el agua caliente por <strong>45-60 minutos</strong>.", "Sacar la carne. <strong>¡Guardar TODOS los jugos en una olla!</strong>", "Secar la superficie de la carne meticulosamente.", "Sellar en sartén a fuego máximo por <strong>45-60 segundos por lado</strong>."] },
+                        { phase: 6, title: "Corte y Servicio Final", timeline: "El Momento de la Verdad", tasks: ["Hervir los jugos guardados hasta que reduzcan a una salsa.", "Identificar la dirección de las fibras de la carne.", "Cortar la falda en rodajas, siempre <strong>EN CONTRA de la veta</strong>.", "Servir inmediatamente con su propia salsa."] }
+                    ]
+                },
+                "camarones-ajillo": {
+                    title: "Camarones al Ajillo",
+                    subtitle: "La textura perfecta que explota en la boca.",
+                    icon: "🍤",
+                    phases: [
+                        { phase: 1, title: "Preparación", timeline: "15 minutos antes de cocinar", tasks: ["Descongelar camarones (570g) en agua fría. Pelar y desvenar.", "Secar muy bien los camarones y sazonar con sal y pimienta blanca.", "<strong>Para la bolsa:</strong> Mezclar camarones con 6 dientes de ajo laminados, 1/2 taza de aceite de oliva, 1-2 guindillas y 3 ramas de perejil."] },
+                        { phase: 2, title: "Cocción Sous Vide", timeline: "Cocción Rápida", tasks: ["Precalentar el roner a <strong>60°C (140°F)</strong>.", "Sumergir la bolsa con los camarones y el aceite.", "Cocinar durante <strong>25 minutos</strong> exactos."] },
+                        { phase: 3, title: "Acabado en Sartén", timeline: "3 minutos antes de servir", tasks: ["Separar los camarones del aceite infusionado (guardar ambos).", "Calentar el aceite en una sartén a fuego medio-alto.", "Saltear 3 dientes de ajo picado hasta que estén fragantes (30 seg).", "Añadir 70ml de vino blanco y hervir 30 seg.", "Añadir los camarones y saltear por <strong>1 minuto</strong> para calentar.", "Apagar el fuego, añadir perejil fresco picado y servir inmediatamente con pan."] }
+                    ]
+                },
+                "camarones-frio": {
+                    title: "Camarones para Cóctel",
+                    subtitle: "Servicio frío, textura crujiente y jugosa.",
+                    icon: "🦐",
+                    phases: [
+                        { phase: 1, title: "Preparación", timeline: "15 minutos antes de cocinar", tasks: ["Descongelar camarones en agua fría. Pelar y desvenar.", "Secar muy bien los camarones.", "Sazonar con sal, pimienta blanca, ajo en polvo y un toque de pimentón.", "Envasar al vacío en una sola capa."] },
+                        { phase: 2, title: "Cocción Sous Vide", timeline: "Cocción Rápida", tasks: ["Precalentar el roner a <strong>60°C (140°F)</strong>.", "Sumergir la bolsa.", "Cocinar durante <strong>20 minutos</strong>."] },
+                        { phase: 3, title: "Enfriamiento Rápido", timeline: "Inmediatamente después de cocinar", tasks: ["Preparar un baño de agua con abundante hielo.", "Sumergir la bolsa caliente en el baño de hielo.", "Enfriar por completo durante al menos <strong>15 minutos</strong>.", "Servir frío en cócteles, ensaladas o con su salsa preferida."] }
+                    ]
+                },
+                "hamburguesas": {
+                    title: "Hamburguesas Perfectas",
+                    subtitle: "Jugosidad de borde a borde, siempre.",
+                    icon: "🍔",
+                    phases: [
+                        { phase: 1, title: "Preparación", timeline: "15 minutos antes de cocinar", tasks: ["Formar las hamburguesas (1.5-2cm grosor) suavemente, sin compactar.", "Hacer una hendidura en el centro con el pulgar.", "Sazonar generosamente por ambos lados con sal y pimienta.", "Envasar al vacío individualmente."] },
+                        { phase: 2, title: "Cocción Sous Vide", timeline: "1-2 horas", tasks: ["Precalentar el roner. <strong>57°C (135°F)</strong> para Medio-Poco, <strong>60°C (140°F)</strong> para Medio, <strong>63°C (145°F)</strong> para Medio-Hecho.", "Sumergir las bolsas.", "Cocinar por al menos <strong>1 a 2 horas</strong>."] },
+                        { phase: 3, title: "Acabado y Sellado", timeline: "5 minutos antes de servir", tasks: ["Sacar las hamburguesas de la bolsa y secar la superficie MUY bien.", "Opcional: Enfriar 10 min en refrigerador para mejor sellado.", "Calentar una sartén de hierro a fuego máximo con aceite.", "Sellar por <strong>60-90 segundos por lado</strong> hasta formar una costra profunda.", "Montar en el pan y servir de inmediato."] }
+                    ]
+                },
+                "pavo-muslos": {
+                    title: "Muslos de Pavo Confitados",
+                    subtitle: "Se deshacen del hueso, increíblemente sabrosos.",
+                    icon: "🦃",
+                    phases: [
+                        { phase: 1, title: "Preparación", timeline: "15 minutos", tasks: ["<strong>Ingredientes:</strong> 3 muslos de pavo (706g), 1.5 cdta sal entrefina, 0.75 cdta pimienta, 0.5 cdta ajo en polvo, 0.5 cdta tomillo seco, 4 ramas romero, 1.5 cda aceite.", "Secar bien los muslos de pavo.", "Mezclar especias y frotar sobre los muslos con el aceite.", "Envasar al vacío con romero y 1 cda de mantequilla/grasa (opcional)."] },
+                        { phase: 2, title: "Cocción Sous Vide", timeline: "Larga Duración", tasks: ["Precalentar el roner a <strong>74°C (165°F)</strong>.", "Sumergir las bolsas.", "Cocinar durante <strong>6 horas</strong>."] },
+                        { phase: 3, title: "Acabado Crujiente", timeline: "10 minutos antes de servir", tasks: ["Enfriar en baño de hielo por 15 min.", "Sacar los muslos de la bolsa (guardar los jugos para una salsa).", "Secar la piel meticulosamente con papel de cocina.", "Sellar en sartén o bajo el grill/broiler del horno al máximo hasta que la piel esté dorada y crujiente (5-10 min)."] }
+                    ]
+                },
+                "asado-de-tira-cerdo": {
+                    title: "Tiras de Asado de Cerdo",
+                    subtitle: "Textura de costilla, sabor intenso.",
+                    icon: "🍖",
+                    phases: [
+                        { phase: 1, title: "Preparación", timeline: "15 minutos", tasks: ["Secar bien las tiras de asado.", "Cubrir con su 'rub' de especias favorito (ej: pimentón, azúcar moreno, sal, pimienta, comino).", "Envasar al vacío con ajo y romero (opcional)."] },
+                        { phase: 2, title: "Cocción Sous Vide", timeline: "24-48 horas", tasks: ["Precalentar el roner a <strong>68°C (155°F)</strong>.", "Sumergir la bolsa.", "Cocinar durante <strong>24 a 48 horas</strong> para máxima ternura."] },
+                        { phase: 3, title: "Acabado en Parrilla o Sartén", timeline: "10 minutos antes de servir", tasks: ["Sacar la carne de la bolsa y secar muy bien.", "Calentar una parrilla o sartén a fuego alto.", "Opcional: barnizar con salsa BBQ.", "Sellar por <strong>2-3 minutos por lado</strong> hasta que esté caramelizado y caliente."] }
+                    ]
+                },
+                "costillas-cerdo": {
+                    title: "Costillas de Cerdo BBQ",
+                    subtitle: "Se desprenden del hueso, glaseado perfecto.",
+                    icon: "🦴",
+                    phases: [
+                        { phase: 1, title: "Preparación", timeline: "15 minutos", tasks: ["Secar bien las costillas y retirar la membrana trasera.", "Sazonar generosamente con 'rub' de BBQ.", "Envasar al vacío con ajo y romero (opcional)."] },
+                        { phase: 2, title: "Cocción Sous Vide", timeline: "18-24 horas", tasks: ["Precalentar el roner a <strong>74°C (165°F)</strong>.", "Sumergir la bolsa.", "Cocinar durante <strong>18 a 24 horas</strong> para una textura ultra tierna."] },
+                        { phase: 3, title: "Acabado y Glaseado", timeline: "15 minutos antes de servir", tasks: ["Sacar las costillas de la bolsa y secarlas MUY bien.", "Preparar glaseado: Salsa BBQ, vinagre de sidra y miel.", "Sellar en sartén, horno/broiler o Air Fryer a alta temperatura.", "Aplicar el glaseado en los últimos minutos y caramelizar. Vigilar de cerca para que no se queme."] }
+                    ]
+                },
+                "lomito-cerdo": {
+                    title: "Lomito de Cerdo",
+                    subtitle: "Jugoso, tierno y perfectamente rosado.",
+                    icon: "🥩",
+                    phases: [
+                        { phase: 1, title: "Preparación", timeline: "10 minutos", tasks: ["Limpiar el lomito (500-700g) de grasa y membranas.", "Sazonar con aceite de oliva, sal y pimienta.", "Envasar al vacío con hierbas frescas (tomillo, romero) y ajo laminado."] },
+                        { phase: 2, title: "Cocción Sous Vide", timeline: "1.5 - 2.5 horas", tasks: ["Precalentar el roner a <strong>60°C (140°F)</strong> para un centro rosado y jugoso.", "Sumergir la bolsa.", "Cocinar durante <strong>2 horas</strong>."] },
+                        { phase: 3, title: "Acabado en Sartén", timeline: "10 minutos antes de servir", tasks: ["Sacar el lomito de la bolsa y secarlo MUY bien.", "Calentar sartén a fuego medio-alto con aceite/mantequilla.", "Sellar por todos lados hasta obtener una costra dorada (3-5 min total).", "Dejar reposar 5-10 minutos antes de cortar en medallones."] }
+                    ]
+                }
+            };
+
+            function showPage(pageId) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+            }
+
+            function renderMainMenu() {
+                recipeMenuContainer.innerHTML = '';
+                for (const recipeId in allRecipes) {
+                    const recipe = allRecipes[recipeId];
+                    const card = document.createElement('div');
+                    card.className = 'menu-card p-6 flex flex-col items-center text-center';
+                    card.dataset.recipeId = recipeId;
+                    card.innerHTML = `
+                        <div class="text-6xl mb-4">${recipe.icon}</div>
+                        <h3 class="text-2xl title-font font-semibold text-gray-800">${recipe.title}</h3>
+                        <p class="text-gray-500 mt-1">${recipe.subtitle}</p>
+                    `;
+                    card.addEventListener('click', () => {
+                        renderRecipePage(recipeId);
+                    });
+                    recipeMenuContainer.appendChild(card);
+                }
+            }
+
+            function renderRecipePage(recipeId) {
+                currentRecipeId = recipeId;
+                const recipe = allRecipes[recipeId];
+                
+                document.getElementById('recipe-title').textContent = recipe.title;
+                document.getElementById('recipe-subtitle').textContent = recipe.subtitle;
+
+                let stepsHtml = '';
+                recipe.phases.forEach(phase => {
+                    stepsHtml += `
+                        <div class="step-card">
+                            <div class="step-header">
+                                <h2 class="text-2xl font-bold">Fase ${phase.phase}: ${phase.title}</h2>
+                                <p class="text-sm opacity-90">${phase.timeline}</p>
+                            </div>
+                            <div class="step-content">
+                    `;
+                    phase.tasks.forEach((task, index) => {
+                        const taskId = `phase${phase.phase}-task${index}`;
+                        stepsHtml += `
+                            <div class="task-item" id="container-${taskId}">
+                                <input type="checkbox" id="${taskId}" data-task-id="${taskId}">
+                                <label for="${taskId}">${task}</label>
+                            </div>
+                        `;
+                    });
+                    stepsHtml += `</div></div>`;
+                });
+                recipeStepsContainer.innerHTML = stepsHtml;
+                
+                loadProgress();
+                showPage('recipe-page');
+            }
+
+            function updateProgress() {
+                if (!currentRecipeId) return;
+                const checkboxes = recipeStepsContainer.querySelectorAll('input[type="checkbox"]');
+                const totalTasks = checkboxes.length;
+                const checkedTasks = Array.from(checkboxes).filter(cb => cb.checked).length;
+                const percentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
+                
+                const progressBar = document.getElementById('progressBar');
+                progressBar.style.width = `${percentage}%`;
+                progressBar.textContent = `${percentage}%`;
+
+                checkboxes.forEach(checkbox => {
+                    const container = document.getElementById(`container-${checkbox.id}`);
+                    if (checkbox.checked) {
+                        container.classList.add('completed');
+                    } else {
+                        container.classList.remove('completed');
+                    }
+                });
+            }
+
+            function saveProgress() {
+                if (!currentRecipeId) return;
+                const progress = {};
+                recipeStepsContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    progress[checkbox.id] = checkbox.checked;
+                });
+                localStorage.setItem(`recipeProgress-${currentRecipeId}`, JSON.stringify(progress));
+            }
+
+            function loadProgress() {
+                if (!currentRecipeId) return;
+                const savedProgress = JSON.parse(localStorage.getItem(`recipeProgress-${currentRecipeId}`));
+                if (savedProgress) {
+                    Object.keys(savedProgress).forEach(taskId => {
+                        const checkbox = document.getElementById(taskId);
+                        if (checkbox) {
+                            checkbox.checked = savedProgress[taskId];
+                        }
+                    });
+                }
+                updateProgress();
+            }
+
+            document.getElementById('resetButton').addEventListener('click', () => {
+                if (!currentRecipeId) return;
+                if (confirm(`¿Está seguro de que desea reiniciar el progreso para "${allRecipes[currentRecipeId].title}"?`)) {
+                    localStorage.removeItem(`recipeProgress-${currentRecipeId}`);
+                    recipeStepsContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    updateProgress();
+                }
+            });
+
+            backToMenuButton.addEventListener('click', () => {
+                currentRecipeId = null;
+                showPage('main-menu-page');
+            });
+
+            renderMainMenu();
+            showPage('main-menu-page');
+        });
+    </script>
 </body>
 </html>

@@ -285,8 +285,8 @@
                 });
                 recipeStepsContainer.innerHTML = stepsHtml;
                 
-                loadProgress();
                 showPage('recipe-page');
+                loadProgress();
             }
 
             function updateProgress() {
@@ -349,8 +349,16 @@
                 showPage('main-menu-page');
             });
 
+            // Add event listener for checkbox changes to the container
+            recipeStepsContainer.addEventListener('change', (e) => {
+                if (e.target.type === 'checkbox') {
+                    saveProgress();
+                    updateProgress();
+                }
+            });
+
+            // Initial Load
             renderMainMenu();
-            showPage('main-menu-page');
         });
     </script>
 </body>

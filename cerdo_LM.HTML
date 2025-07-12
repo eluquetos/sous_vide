@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receta Interactiva: Falda de Cerdo Sous Vide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Teko:wght@600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .title-font {
+            font-family: 'Teko', sans-serif;
+        }
+        .step-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border-left: 5px solid #4f46e5;
+        }
+        .step-header {
+            background-color: #4f46e5;
+            color: white;
+            padding: 1rem 1.5rem;
+        }
+        .step-content {
+            padding: 1.5rem;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        .task-item input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-right: 1rem;
+            accent-color: #4f46e5;
+        }
+        .task-item label {
+            flex-grow: 1;
+        }
+        .task-item.completed label {
+            text-decoration: line-through;
+            color: #6b7280;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 1.25rem;
+            background-color: #4ade80;
+            transition: width 0.5s ease-in-out;
+            text-align: center;
+            color: #1f2937;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-3xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-5xl md:text-6xl title-font text-gray-800">Falda de Cerdo Sous Vide</h1>
+            <p class="text-lg text-gray-600 mt-2">Guía interactiva de 6 días por un Chef Michelin</p>
+        </header>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-bold text-gray-700 mb-2">Progreso Total</h2>
+            <div class="progress-bar-container">
+                <div id="progressBar" class="progress-bar">0%</div>
+            </div>
+        </div>
+
+        <main id="recipeContainer">
+            <!-- Las fases de la receta se insertarán aquí dinámicamente -->
+        </main>
+        
+        <footer class="text-center mt-8">
+            <button id="resetButton" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
+                Reiniciar Progreso
+            </button>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const recipeContainer = document.getElementById('recipeContainer');
+            const progressBar = document.getElementById('progressBar');
+            const resetButton = document.getElementById('resetButton');
+            let totalTasks = 0;
+
+            const getFormattedDate = (offset = 0) => {
+                const date = new Date();
+                date.setDate(date.getDate() + offset);
+                return date.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            };
+
+            const recipeData = [
+                {
+                    phase: 1,
+                    title: "Preparación y Adobo",
+                    timeline: `Hoy, ${getFormattedDate(0)}`,
+                    tasks: [
+                        "<strong>Ingredientes del Adobo:</strong> 1.5 cda pimentón dulce, 0.5 cda pimentón ahumado, 2 cdta comino, 2 cdta orégano, 2 cdta ajo en polvo, 18-20g sal, 1.5 cdta pimienta, 2 cda panela, jugo de 2 naranjas agrias, 3 cda aceite.",
+                        "Secar la carne de 1.5 kg a la perfección con papel de cocina.",
+                        "Mezclar todos los ingredientes del adobo en un bol hasta formar una pasta.",
+                        "Cubrir y masajear toda la carne con el adobo.",
+                        "Envasar la carne al vacío, extrayendo todo el aire posible."
+                    ]
+                },
+                {
+                    phase: 2,
+                    title: "Cocción Sous Vide",
+                    timeline: `Hoy a Mañana (${getFormattedDate(0)} - ${getFormattedDate(1)})`,
+                    tasks: [
+                        "Precalentar el roner a <strong>62°C (144°F)</strong>. Esperar a que el agua llegue a la temperatura.",
+                        "Sumergir la bolsa en el agua caliente.",
+                        "Cocinar durante <strong>12 horas</strong>."
+                    ]
+                },
+                {
+                    phase: 3,
+                    title: "Enfriamiento Rápido (Cook-Chill)",
+                    timeline: `Mañana, ${getFormattedDate(1)}`,
+                    tasks: [
+                        "Preparar un baño de agua con abundante hielo.",
+                        "Sacar la bolsa del agua caliente y sumergirla inmediatamente en el baño de hielo.",
+                        "Enfriar por completo durante al menos <strong>1 hora</strong>. Este paso es CRÍTICO para la seguridad."
+                    ]
+                },
+                {
+                    phase: 4,
+                    title: "Almacenamiento en Frío",
+                    timeline: `Hasta el día del servicio (${getFormattedDate(1)} - ${getFormattedDate(5)} o ${getFormattedDate(6)})`,
+                    tasks: [
+                        "Secar el exterior de la bolsa fría.",
+                        "Guardar en la parte más fría del refrigerador.",
+                        "<strong>No abrir la bolsa bajo ninguna circunstancia</strong> hasta el día de servir."
+                    ]
+                },
+                {
+                    phase: 5,
+                    title: "Regeneración y Sellado",
+                    timeline: `Día del Servicio (${getFormattedDate(5)} o ${getFormattedDate(6)})`,
+                    tasks: [
+                        "Precalentar el roner a <strong>58°C (136°F)</strong> para regenerar.",
+                        "Sumergir la bolsa fría en el agua caliente durante <strong>45-60 minutos</strong>.",
+                        "Sacar la carne de la bolsa. <strong>¡Guardar TODOS los jugos en una olla!</strong>",
+                        "Secar la superficie de la carne meticulosamente con papel de cocina.",
+                        "Sellar en una sartén o parrilla a fuego máximo por <strong>45-60 segundos por lado</strong>."
+                    ]
+                },
+                {
+                    phase: 6,
+                    title: "Corte y Servicio Final",
+                    timeline: "El Momento de la Verdad",
+                    tasks: [
+                        "Poner a hervir los jugos guardados hasta que reduzcan y espesen ligeramente.",
+                        "Identificar la dirección de las fibras de la carne.",
+                        "Cortar la falda en rodajas, siempre <strong>EN CONTRA de la veta</strong>.",
+                        "Servir inmediatamente, cubriendo las rodajas con su propia salsa."
+                    ]
+                }
+            ];
+
+            const renderRecipe = () => {
+                let html = '';
+                totalTasks = 0;
+                recipeData.forEach(phase => {
+                    html += `
+                        <div class="step-card">
+                            <div class="step-header">
+                                <h2 class="text-2xl font-bold">Fase ${phase.phase}: ${phase.title}</h2>
+                                <p class="text-sm opacity-90">${phase.timeline}</p>
+                            </div>
+                            <div class="step-content">
+                    `;
+                    phase.tasks.forEach((task, index) => {
+                        const taskId = `phase${phase.phase}-task${index}`;
+                        totalTasks++;
+                        html += `
+                            <div class="task-item" id="container-${taskId}">
+                                <input type="checkbox" id="${taskId}" data-task-id="${taskId}">
+                                <label for="${taskId}">${task}</label>
+                            </div>
+                        `;
+                    });
+                    html += `</div></div>`;
+                });
+                recipeContainer.innerHTML = html;
+            };
+
+            const updateProgress = () => {
+                const checkedTasks = document.querySelectorAll('input[type="checkbox"]:checked').length;
+                const percentage = totalTasks > 0 ? Math.round((checkedTasks / totalTasks) * 100) : 0;
+                progressBar.style.width = `${percentage}%`;
+                progressBar.textContent = `${percentage}%`;
+
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    const container = document.getElementById(`container-${checkbox.id}`);
+                    if (checkbox.checked) {
+                        container.classList.add('completed');
+                    } else {
+                        container.classList.remove('completed');
+                    }
+                });
+            };
+
+            const saveProgress = () => {
+                const progress = {};
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    progress[checkbox.id] = checkbox.checked;
+                });
+                localStorage.setItem('recipeProgress-pork', JSON.stringify(progress));
+            };
+
+            const loadProgress = () => {
+                const savedProgress = JSON.parse(localStorage.getItem('recipeProgress-pork'));
+                if (savedProgress) {
+                    Object.keys(savedProgress).forEach(taskId => {
+                        const checkbox = document.getElementById(taskId);
+                        if (checkbox) {
+                            checkbox.checked = savedProgress[taskId];
+                        }
+                    });
+                }
+            };
+
+            const handleCheckboxChange = () => {
+                saveProgress();
+                updateProgress();
+            };
+            
+            resetButton.addEventListener('click', () => {
+                if (confirm('¿Está seguro de que desea reiniciar todo su progreso?')) {
+                    localStorage.removeItem('recipeProgress-pork');
+                    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
+                    updateProgress();
+                }
+            });
+
+            // Initial setup
+            renderRecipe();
+            loadProgress();
+            updateProgress();
+
+            // Add event listeners
+            recipeContainer.addEventListener('change', (e) => {
+                if (e.target.type === 'checkbox') {
+                    handleCheckboxChange();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
